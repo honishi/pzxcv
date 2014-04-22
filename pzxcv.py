@@ -31,7 +31,11 @@ def main():
 
     characters = config.get('pzxcv', 'characters')
 
-    input_count = 0
+    exit_count = 0      # never exit
+    if len(sys.argv) == 2:
+        exit_count = int(sys.argv[1])
+
+    input_count = 1
     previours_character = None
     reserved_character = None
     getch = _Getch()
@@ -58,6 +62,8 @@ def main():
             sys.stdout.write("\a")
             reserved_character = target_character
         elif target_character == input_character:
+            if input_count == exit_count:
+                break
             input_count += 1
 
 
