@@ -31,7 +31,7 @@ def main():
     config.read(CONFIG_FILE)
 
     default_characters = config.get('pzxcv', 'characters')
-    characters = default_characters
+    current_characters = default_characters
 
     total_input_count = 0
 
@@ -54,8 +54,8 @@ def main():
                 target_character = reserved_character
                 reserved_character = None
             else:
-                index = random.randint(0, len(characters) - 1)
-                target_character = characters[index]
+                index = random.randint(0, len(current_characters) - 1)
+                target_character = current_characters[index]
                 if target_character == previours_character:
                     continue
                 previours_character = target_character
@@ -82,9 +82,10 @@ def main():
         if should_exit:
             break
 
-        characters = renew_characters(default_characters, missed_characters)
-        if characters != default_characters:
-            print("character set changed. < " + characters + " >")
+        candidate_characters = renew_characters(default_characters, missed_characters)
+        if current_characters != candidate_characters:
+            current_characters = candidate_characters
+            print("character set changed. < " + current_characters + " >")
 
 
 def report_missed_characters(missed_characters):
@@ -105,18 +106,18 @@ def renew_characters(default_characters, missed_characters):
     sorted_missed_characters = sorted(missed_characters.items(), key=lambda x:x[1])
 
     for character, missed_count in sorted_missed_characters:
-        if 0 < missed_count:
+        if 1 < missed_count:
             failure_characters += character
 
-    characters = default_characters
+    renewed_characters = default_characters
 
     if 0 < len(failure_characters):
-        characters = failure_characters
-        while len(characters) < MINIMUM_CHARACTERS_LENGTH:
+        renewed_characters = failure_characters
+        while len(renewed_characters) < MINIMUM_CHARACTERS_LENGTH:
             index = random.randint(0, len(default_characters) - 1)
-            characters  += default_characters[index]
+            renewed_characters  += default_characters[index]
 
-    return characters
+    return renewed_characters
 
 
 if __name__ == "__main__":
